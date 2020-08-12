@@ -1,0 +1,17 @@
+--Actualizacion: 2020-05-12
+--Cantidad: 815.395
+--Cantidad: 589.948
+--Actualizacion: 2020-06-03
+--Cantidad: 747.172
+--Actualizacion: 2020-07-06
+--Cantidad: 645.668
+--Actualizacion: 2020-08-10
+--Cantidad: 589.948
+
+SELECT count(*)
+FROM cl0_c_sp_factotal_db.salida_app_factotal_ref
+WHERE archive = 20200706;
+
+show partitions cl0_c_sp_factotal_db.salida_app_factotal_ref; 
+
+INVALIDATE METADATA salida_app_factotal_ref
