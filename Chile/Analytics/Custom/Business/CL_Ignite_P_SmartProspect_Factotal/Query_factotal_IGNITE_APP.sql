@@ -5,13 +5,13 @@
 ------------------------------------------------
 
 --CREAMOS EL BACKUP
-drop table ${db}.cl_smartprospect_factotal_sf_bkp;
-create table ${db}.cl_smartprospect_factotal_sf_bkp_20200707 stored as parquet as 
-select * from ${db}.cl_smartprospect_factotal_sf;
+drop table ${db}.cl_smartprospect_factotal_sf_bkp_20200808;
+create table ${db}.cl_smartprospect_factotal_sf_bkp_20200808 stored as parquet as 
+select * from ${db}.cl_smartprospect_factotal_sf
 --------------------
 --Normalizamos datos con el ultimo ARCHIVE
 --------------------
-DROP TABLE ${db}.cl_smartprospect_factotal_sf ;
+DROP TABLE ${db}.cl_smartprospect_factotal_sf;
 
 create table ${db}.cl_smartprospect_factotal_sf stored as parquet as 
 SELECT rut,rut_ind_pj,rut_num,nombre,nombregrupo,comuna,region,sucursaleje,
@@ -133,69 +133,128 @@ n_documento_infra,n_documento_multa,archive,
     nvl(cast(monto_infra as float),0) as monto_infra,
     nvl(cast(monto_multa as float),0) as monto_multa,
     case when substr(fechapriope,3,1) = "-" then fechapriope
-        when substr(fechapriope,5,1) = "-" then concat(substr(fechapriope,9,2),"-",substr(fechapriope,6,2),"-",substr(fechapriope,1,4))
-        when substr(fechapriope,3,1) = "/" then concat(substr(fechaultope,7,4),"-",substr(fechaultope,4,2),"-",substr(fechapriope,1,2))
-        when substr(fechapriope,5,1) = "/" then concat(substr(fechapriope,9,2),"-",substr(fechapriope,6,2),"-",substr(fechapriope,1,4))
-        else  '01-01-1900'
+        when substr(fechapriope,5,1) = "-" then concat(substr(fechapriope,9,2),"/",substr(fechapriope,6,2),"/",substr(fechapriope,1,4))
+        when substr(fechapriope,3,1) = "/" then concat(substr(fechapriope,1,2),"/",substr(fechapriope,4,2),"/",substr(fechapriope,7,4))
+        when substr(fechapriope,5,1) = "/" then concat(substr(fechapriope,9,2),"/",substr(fechapriope,6,2),"/",substr(fechapriope,1,4))
+        else  '01/01/1900'
     end as fechapriope,
+    case when substr(fechapriope,3,1) = "-" then fechapriope
+        when substr(fechapriope,5,1) = "-" then concat(substr(fechapriope,1,4),substr(fechapriope,6,2),substr(fechapriope,9,2))
+        when substr(fechapriope,3,1) = "/" then concat(substr(fechapriope,7,4),substr(fechapriope,4,2),substr(fechapriope,1,2))
+        when substr(fechapriope,5,1) = "/" then concat(substr(fechapriope,1,4),substr(fechapriope,6,2),substr(fechapriope,9,2))
+        else  '19000101'
+    end as fechapriopeint,
     case when substr(fechaultope,3,1) = "-" then fechaultope
-        when substr(fechaultope,5,1) = "-" then concat(substr(fechaultope,9,2),"-",substr(fechaultope,6,2),"-",substr(fechaultope,1,4))
-        when substr(fechaultope,3,1) = "/" then concat(substr(fechaultope,7,4),"-",substr(fechaultope,4,2),"-",substr(fechaultope,1,2))
-        when substr(fechaultope,5,1) = "/" then concat(substr(fechaultope,9,2),"-",substr(fechaultope,6,2),"-",substr(fechaultope,1,4))
-        else  '01-01-1900'
+        when substr(fechaultope,5,1) = "-" then concat(substr(fechaultope,9,2),"/",substr(fechaultope,6,2),"/",substr(fechaultope,1,4))
+        when substr(fechaultope,3,1) = "/" then concat(substr(fechaultope,1,2),"/",substr(fechaultope,4,2),"/",substr(fechaultope,7,4))
+        when substr(fechaultope,5,1) = "/" then concat(substr(fechaultope,9,2),"/",substr(fechaultope,6,2),"/",substr(fechaultope,1,4))
+        else  '01/01/1900'
     end as fechaultope,
+    case when substr(fechaultope,3,1) = "-" then fechaultope
+        when substr(fechaultope,5,1) = "-" then concat(substr(fechaultope,1,4),substr(fechaultope,6,2),substr(fechaultope,9,2))
+        when substr(fechaultope,3,1) = "/" then concat(substr(fechaultope,7,4),substr(fechaultope,4,2),substr(fechaultope,1,2))
+        when substr(fechaultope,5,1) = "/" then concat(substr(fechaultope,1,4),substr(fechaultope,6,2),substr(fechaultope,9,2))
+        else  '19000101'
+    end as fechaultopeint,
     case when substr(fechapriopegrp,3,1) = "-" then fechapriopegrp
-        when substr(fechapriopegrp,5,1) = "-" then concat(substr(fechapriopegrp,9,2),"-",substr(fechapriopegrp,6,2),"-",substr(fechapriopegrp,1,4))
-        when substr(fechapriopegrp,3,1) = "/" then concat(substr(fechapriopegrp,7,4),"-",substr(fechapriopegrp,4,2),"-",substr(fechapriopegrp,1,2))
-        when substr(fechapriopegrp,5,1) = "/" then concat(substr(fechapriopegrp,9,2),"-",substr(fechapriopegrp,6,2),"-",substr(fechapriopegrp,1,4))
-        else  '01-01-1900'
+        when substr(fechapriopegrp,5,1) = "-" then concat(substr(fechapriopegrp,9,2),"/",substr(fechapriopegrp,6,2),"/",substr(fechapriopegrp,1,4))
+        when substr(fechapriopegrp,3,1) = "/" then concat(substr(fechapriopegrp,1,2),"/",substr(fechapriopegrp,4,2),"/",substr(fechapriopegrp,7,4))
+        when substr(fechapriopegrp,5,1) = "/" then concat(substr(fechapriopegrp,9,2),"/",substr(fechapriopegrp,6,2),"/",substr(fechapriopegrp,1,4))
+        else  '01/01/1900'
     end as fechapriopegrp,
+    case when substr(fechapriopegrp,3,1) = "-" then fechapriopegrp
+        when substr(fechapriopegrp,5,1) = "-" then concat(substr(fechapriopegrp,1,4),substr(fechapriopegrp,6,2),substr(fechapriopegrp,9,2))
+        when substr(fechapriopegrp,3,1) = "/" then concat(substr(fechapriopegrp,7,4),substr(fechapriopegrp,4,2),substr(fechapriopegrp,1,2))
+        when substr(fechapriopegrp,5,1) = "/" then concat(substr(fechapriopegrp,1,4),substr(fechapriopegrp,6,2),substr(fechapriopegrp,9,2))
+        else  '19000101'
+    end as fechapriopegrpint,
     case when substr(fechaultopegrp,3,1) = "-" then fechaultopegrp
-        when substr(fechaultopegrp,5,1) = "-" then concat(substr(fechaultopegrp,9,2),"-",substr(fechaultopegrp,6,2),"-",substr(fechaultopegrp,1,4))
-        when substr(fechaultopegrp,3,1) = "/" then concat(substr(fechaultopegrp,7,4),"-",substr(fechaultopegrp,4,2),"-",substr(fechaultopegrp,1,2))
-        when substr(fechaultopegrp,5,1) = "/" then concat(substr(fechaultopegrp,9,2),"-",substr(fechaultopegrp,6,2),"-",substr(fechaultopegrp,1,4))
-        else  '01-01-1900'
+        when substr(fechaultopegrp,5,1) = "-" then concat(substr(fechaultopegrp,9,2),"/",substr(fechaultopegrp,6,2),"/",substr(fechaultopegrp,1,4))
+        when substr(fechaultopegrp,3,1) = "/" then concat(substr(fechaultopegrp,1,2),"/",substr(fechaultopegrp,4,2),"/",substr(fechaultopegrp,7,4))
+        when substr(fechaultopegrp,5,1) = "/" then concat(substr(fechaultopegrp,9,2),"/",substr(fechaultopegrp,6,2),"/",substr(fechaultopegrp,1,4))
+        else  '01/01/1900'
     end as fechaultopegrp,
+    case when substr(fechaultopegrp,3,1) = "-" then fechaultopegrp
+        when substr(fechaultopegrp,5,1) = "-" then concat(substr(fechaultopegrp,1,4),substr(fechaultopegrp,6,2),substr(fechaultopegrp,9,2))
+        when substr(fechaultopegrp,3,1) = "/" then concat(substr(fechaultopegrp,7,4),substr(fechaultopegrp,4,2),substr(fechaultopegrp,1,2))
+        when substr(fechaultopegrp,5,1) = "/" then concat(substr(fechaultopegrp,1,4),substr(fechaultopegrp,6,2),substr(fechaultopegrp,9,2))
+        else  '19000101'
+    end as fechaultopegrpint,
     case when substr(fechapricontrol,3,1) = "-" then fechapricontrol
-        when substr(fechapricontrol,5,1) = "-" then concat(substr(fechapricontrol,9,2),"-",substr(fechapricontrol,6,2),"-",substr(fechapricontrol,1,4))
-        when substr(fechapricontrol,3,1) = "/" then concat(substr(fechapricontrol,7,4),"-",substr(fechapricontrol,4,2),"-",substr(fechapricontrol,1,2))
-        when substr(fechapricontrol,5,1) = "/" then concat(substr(fechapricontrol,9,2),"-",substr(fechapricontrol,6,2),"-",substr(fechapricontrol,1,4))
-        else  '01-01-1900'
+        when substr(fechapricontrol,5,1) = "-" then concat(substr(fechapricontrol,9,2),"/",substr(fechapricontrol,6,2),"/",substr(fechapricontrol,1,4))
+        when substr(fechapricontrol,3,1) = "/" then concat(substr(fechapricontrol,1,2),"/",substr(fechapricontrol,4,2),"/",substr(fechapricontrol,7,4))
+        when substr(fechapricontrol,5,1) = "/" then concat(substr(fechapricontrol,9,2),"/",substr(fechapricontrol,6,2),"/",substr(fechapricontrol,1,4))
+        else  '01/01/1900'
     end as fechapricontrol,
+    case when substr(fechapricontrol,3,1) = "-" then fechapricontrol
+        when substr(fechapricontrol,5,1) = "-" then concat(substr(fechapricontrol,1,4),substr(fechapricontrol,6,2),substr(fechapricontrol,9,2))
+        when substr(fechapricontrol,3,1) = "/" then concat(substr(fechapricontrol,7,4),substr(fechapricontrol,4,2),substr(fechapricontrol,1,2))
+        when substr(fechapricontrol,5,1) = "/" then concat(substr(fechapricontrol,1,4),substr(fechapricontrol,6,2),substr(fechapricontrol,9,2))
+        else  '19000101'
+    end as fechapricontrolint,
     case when substr(fechaultcontrol,3,1) = "-" then fechaultcontrol
-        when substr(fechaultcontrol,5,1) = "-" then concat(substr(fechaultcontrol,9,2),"-",substr(fechaultcontrol,6,2),"-",substr(fechaultcontrol,1,4))
-        when substr(fechaultcontrol,3,1) = "/" then concat(substr(fechaultcontrol,7,4),"-",substr(fechaultcontrol,4,2),"-",substr(fechaultcontrol,1,2))
-        when substr(fechaultcontrol,5,1) = "/" then concat(substr(fechaultcontrol,9,2),"-",substr(fechaultcontrol,6,2),"-",substr(fechaultcontrol,1,4))
-        else  '01-01-1900'
+        when substr(fechaultcontrol,5,1) = "-" then concat(substr(fechaultcontrol,9,2),"/",substr(fechaultcontrol,6,2),"/",substr(fechaultcontrol,1,4))
+        when substr(fechaultcontrol,3,1) = "/" then concat(substr(fechaultcontrol,1,2),"/",substr(fechaultcontrol,4,2),"/",substr(fechaultcontrol,7,4))
+        when substr(fechaultcontrol,5,1) = "/" then concat(substr(fechaultcontrol,9,2),"/",substr(fechaultcontrol,6,2),"/",substr(fechaultcontrol,1,4))
+        else  '01/01/1900'
     end as fechaultcontrol,
+    case when substr(fechaultcontrol,3,1) = "-" then fechaultcontrol
+        when substr(fechaultcontrol,5,1) = "-" then concat(substr(fechaultcontrol,1,4),substr(fechaultcontrol,6,2),substr(fechaultcontrol,9,2))
+        when substr(fechaultcontrol,3,1) = "/" then concat(substr(fechaultcontrol,7,4),substr(fechaultcontrol,4,2),substr(fechaultcontrol,1,2))
+        when substr(fechaultcontrol,5,1) = "/" then concat(substr(fechaultcontrol,1,4),substr(fechaultcontrol,6,2),substr(fechaultcontrol,9,2))
+        else  '19000101'
+    end as fechaultcontrolint,
     case when substr(fechapricontrolgrp,3,1) = "-" then fechapricontrolgrp
-        when substr(fechapricontrolgrp,5,1) = "-" then concat(substr(fechapricontrolgrp,9,2),"-",substr(fechapricontrolgrp,6,2),"-",substr(fechapricontrolgrp,1,4))
-        when substr(fechapricontrolgrp,3,1) = "/" then concat(substr(fechapricontrolgrp,7,4),"-",substr(fechapricontrolgrp,4,2),"-",substr(fechapricontrolgrp,1,2))
-        when substr(fechapricontrolgrp,5,1) = "/" then concat(substr(fechapricontrolgrp,9,2),"-",substr(fechapricontrolgrp,6,2),"-",substr(fechapricontrolgrp,1,4))
-        else  '01-01-1900'
+        when substr(fechapricontrolgrp,5,1) = "-" then concat(substr(fechapricontrolgrp,9,2),"/",substr(fechapricontrolgrp,6,2),"/",substr(fechapricontrolgrp,1,4))
+        when substr(fechapricontrolgrp,3,1) = "/" then concat(substr(fechapricontrolgrp,1,2),"/",substr(fechapricontrolgrp,4,2),"/",substr(fechapricontrolgrp,7,4))
+        when substr(fechapricontrolgrp,5,1) = "/" then concat(substr(fechapricontrolgrp,9,2),"/",substr(fechapricontrolgrp,6,2),"/",substr(fechapricontrolgrp,1,4))
+        else  '01/01/1900'
     end as fechapricontrolgrp,
+    case when substr(fechapricontrolgrp,3,1) = "-" then fechapricontrolgrp
+        when substr(fechapricontrolgrp,5,1) = "-" then concat(substr(fechapricontrolgrp,1,4),substr(fechapricontrolgrp,6,2),substr(fechapricontrolgrp,9,2))
+        when substr(fechapricontrolgrp,3,1) = "/" then concat(substr(fechapricontrolgrp,7,4),substr(fechapricontrolgrp,4,2),substr(fechapricontrolgrp,1,2))
+        when substr(fechapricontrolgrp,5,1) = "/" then concat(substr(fechapricontrolgrp,1,4),substr(fechapricontrolgrp,6,2),substr(fechapricontrolgrp,9,2))
+        else  '19000101'
+    end as fechapricontrolgrpint,
     case when substr(fechaultcontrolgrp,3,1) = "-" then fechaultcontrolgrp
-        when substr(fechaultcontrolgrp,5,1) = "-" then concat(substr(fechaultcontrolgrp,9,2),"-",substr(fechaultcontrolgrp,6,2),"-",substr(fechaultcontrolgrp,1,4))
-        when substr(fechaultcontrolgrp,3,1) = "/" then concat(substr(fechaultcontrolgrp,7,4),"-",substr(fechaultcontrolgrp,4,2),"-",substr(fechaultcontrolgrp,1,2))
-        when substr(fechaultcontrolgrp,5,1) = "/" then concat(substr(fechaultcontrolgrp,9,2),"-",substr(fechaultcontrolgrp,6,2),"-",substr(fechaultcontrolgrp,1,4))
-        else  '01-01-1900'
+        when substr(fechaultcontrolgrp,5,1) = "-" then concat(substr(fechaultcontrolgrp,9,2),"/",substr(fechaultcontrolgrp,6,2),"/",substr(fechaultcontrolgrp,1,4))
+        when substr(fechaultcontrolgrp,3,1) = "/" then concat(substr(fechaultcontrolgrp,1,2),"/",substr(fechaultcontrolgrp,4,2),"/",substr(fechaultcontrolgrp,7,4))
+        when substr(fechaultcontrolgrp,5,1) = "/" then concat(substr(fechaultcontrolgrp,9,2),"/",substr(fechaultcontrolgrp,6,2),"/",substr(fechaultcontrolgrp,1,4))
+        else  '01/01/1900'
     end as fechaultcontrolgrp,
+    case when substr(fechaultcontrolgrp,3,1) = "-" then fechaultcontrolgrp
+        when substr(fechaultcontrolgrp,5,1) = "-" then concat(substr(fechaultcontrolgrp,1,4),substr(fechaultcontrolgrp,6,2),substr(fechaultcontrolgrp,9,2))
+        when substr(fechaultcontrolgrp,3,1) = "/" then concat(substr(fechaultcontrolgrp,7,4),substr(fechaultcontrolgrp,4,2),substr(fechaultcontrolgrp,1,2))
+        when substr(fechaultcontrolgrp,5,1) = "/" then concat(substr(fechaultcontrolgrp,1,4),substr(fechaultcontrolgrp,6,2),substr(fechaultcontrolgrp,9,2))
+        else  '19000101'
+    end as fechaultcontrolgrpint,
     case when substr(fechaproxcontrol,3,1) = "-" then fechaproxcontrol
-        when substr(fechaproxcontrol,5,1) = "-" then concat(substr(fechaproxcontrol,9,2),"-",substr(fechaproxcontrol,6,2),"-",substr(fechaproxcontrol,1,4))
-        when substr(fechaproxcontrol,3,1) = "/" then concat(substr(fechaproxcontrol,7,4),"-",substr(fechaproxcontrol,4,2),"-",substr(fechaproxcontrol,1,2))
-        when substr(fechaproxcontrol,5,1) = "/" then concat(substr(fechaproxcontrol,9,2),"-",substr(fechaproxcontrol,6,2),"-",substr(fechaproxcontrol,1,4))
-        else  '01-01-1900'
+        when substr(fechaproxcontrol,5,1) = "-" then concat(substr(fechaproxcontrol,9,2),"/",substr(fechaproxcontrol,6,2),"/",substr(fechaproxcontrol,1,4))
+        when substr(fechaproxcontrol,3,1) = "/" then concat(substr(fechaproxcontrol,1,2),"/",substr(fechaproxcontrol,4,2),"/",substr(fechaproxcontrol,7,4))
+        when substr(fechaproxcontrol,5,1) = "/" then concat(substr(fechaproxcontrol,9,2),"/",substr(fechaproxcontrol,6,2),"/",substr(fechaproxcontrol,1,4))
+        else  '01/01/1900'
     end as fechaproxcontrol,
+    case when substr(fechaproxcontrol,3,1) = "-" then fechaproxcontrol
+        when substr(fechaproxcontrol,5,1) = "-" then concat(substr(fechaproxcontrol,1,4),substr(fechaproxcontrol,6,2),substr(fechaproxcontrol,9,2))
+        when substr(fechaproxcontrol,3,1) = "/" then concat(substr(fechaproxcontrol,7,4),substr(fechaproxcontrol,4,2),substr(fechaproxcontrol,1,2))
+        when substr(fechaproxcontrol,5,1) = "/" then concat(substr(fechaproxcontrol,1,4),substr(fechaproxcontrol,6,2),substr(fechaproxcontrol,9,2))
+        else  '19000101'
+    end as fechaproxcontrolint,
     case when substr(fechaproxcontrolgrp,3,1) = "-" then fechaproxcontrolgrp
-        when substr(fechaproxcontrolgrp,5,1) = "-" then concat(substr(fechaproxcontrolgrp,9,2),"-",substr(fechaproxcontrolgrp,6,2),"-",substr(fechaproxcontrolgrp,1,4))
-        when substr(fechaproxcontrolgrp,3,1) = "/" then concat(substr(fechaproxcontrolgrp,7,4),"-",substr(fechaproxcontrolgrp,4,2),"-",substr(fechaproxcontrolgrp,1,2))
-        when substr(fechaproxcontrolgrp,5,1) = "/" then concat(substr(fechaproxcontrolgrp,9,2),"-",substr(fechaproxcontrolgrp,6,2),"-",substr(fechaproxcontrolgrp,1,4))
-        else  '01-01-1900'
+        when substr(fechaproxcontrolgrp,5,1) = "-" then concat(substr(fechaproxcontrolgrp,9,2),"/",substr(fechaproxcontrolgrp,6,2),"/",substr(fechaproxcontrolgrp,1,4))
+        when substr(fechaproxcontrolgrp,3,1) = "/" then concat(substr(fechaproxcontrolgrp,1,2),"/",substr(fechaproxcontrolgrp,4,2),"/",substr(fechaproxcontrolgrp,7,4))
+        when substr(fechaproxcontrolgrp,5,1) = "/" then concat(substr(fechaproxcontrolgrp,9,2),"/",substr(fechaproxcontrolgrp,6,2),"/",substr(fechaproxcontrolgrp,1,4))
+        else  '01/01/1900'
     end as fechaproxcontrolgrp,
+    case when substr(fechaproxcontrolgrp,3,1) = "-" then fechaproxcontrolgrp
+        when substr(fechaproxcontrolgrp,5,1) = "-" then concat(substr(fechaproxcontrolgrp,1,4),substr(fechaproxcontrolgrp,6,2),substr(fechaproxcontrolgrp,9,2))
+        when substr(fechaproxcontrolgrp,3,1) = "/" then concat(substr(fechaproxcontrolgrp,7,4),substr(fechaproxcontrolgrp,4,2),substr(fechaproxcontrolgrp,1,2))
+        when substr(fechaproxcontrolgrp,5,1) = "/" then concat(substr(fechaproxcontrolgrp,1,4),substr(fechaproxcontrolgrp,6,2),substr(fechaproxcontrolgrp,9,2))
+        else  '19000101'
+    end as fechaproxcontrolgrpint,  
     ${create_date} as create_date,
     ${create_user} as create_user,
     ${update_date} as update_date,
     ${update_user} as update_user
 FROM ${db}.salida_app_factotal_ref
-WHERE archive = 20200706;
-
+WHERE archive = 20200805;
